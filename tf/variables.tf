@@ -13,7 +13,7 @@ variable "function-name" {
 variable "lambda-folder" {
   type        = string
   description = "Name of the lambda folder"
-  default     = "lambda-functions/"
+  default     = "lambda-functions"
 }
 
 variable "lambda-zip-path" {
