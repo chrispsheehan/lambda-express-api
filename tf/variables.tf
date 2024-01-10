@@ -19,5 +19,5 @@ variable "lambda-folder" {
 variable "lambda-zip-path" {
   type        = string
   description = "Name of the lambda zip file path"
-  default     = "loadbalancer-to-es.zip"
+  default     = "lambda-express-api.zip"
 }
