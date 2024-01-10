@@ -27,6 +27,13 @@ resource "aws_lambda_function" "test_lambda" {
   }
 }
 
+resource "aws_lambda_permission" "api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.test_lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+}
+
 resource "aws_api_gateway_rest_api" "my_api" {
   name        = "MyAPIGateway"
   description = "My API Gateway"
@@ -54,9 +61,31 @@ resource "aws_api_gateway_integration" "my_integration" {
   uri                     = aws_lambda_function.test_lambda.invoke_arn
 }
 
-resource "aws_lambda_permission" "api_gateway" {
-  statement_id  = "AllowAPIGatewayInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.test_lambda.function_name
-  principal     = "apigateway.amazonaws.com"
+resource "aws_api_gateway_deployment" "example" {
+  depends_on = [ 
+    aws_api_gateway_integration.my_integration,
+    aws_api_gateway_method.my_method
+  ]
+
+  rest_api_id = aws_api_gateway_rest_api.my_api.id
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_api_gateway_stage" "example" {
+  deployment_id = aws_api_gateway_deployment.example.id
+  rest_api_id   = aws_api_gateway_rest_api.my_api.id
+  stage_name    = "example"
+}
+
+resource "aws_api_gateway_method_settings" "example" {
+  rest_api_id = aws_api_gateway_rest_api.my_api.id
+  stage_name  = aws_api_gateway_stage.example.stage_name
+  method_path = "*/*"
+
+  settings {
+    metrics_enabled = false
+  }
 }
