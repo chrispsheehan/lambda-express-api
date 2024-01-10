@@ -62,7 +62,7 @@ resource "aws_api_gateway_integration" "my_integration" {
 }
 
 resource "aws_api_gateway_deployment" "example" {
-  depends_on = [ 
+  depends_on = [
     aws_api_gateway_integration.my_integration,
     aws_api_gateway_method.my_method
   ]
