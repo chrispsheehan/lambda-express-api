@@ -1,4 +1,4 @@
-name: Terraform code checks
+name: Terraform action wrapper
 
 inputs:
   aws_account_id:
@@ -12,6 +12,9 @@ inputs:
     required: true
   terraform_action:
     description: 'Terraform action to preform either apply/destroy'
+    required: true
+  stage:
+    description: 'Terraform workspace/environment to be assumed i.e. qa/dev etc'
     required: true
 
 runs:
@@ -29,6 +32,12 @@ runs:
       with:
         fetch-depth: 0
 
+    - name: Select Workspace
+      shell: bash
+      run: |
+        cd tf
+        terraform select -or-create ${{ inputs.stage }}
+
     - name: Init
       shell: bash
       run: |
@@ -39,4 +48,4 @@ runs:
       shell: bash
       run: |
         cd tf
-        terraform ${{ inputs.terraform_action }} -auto-approve
+        terraform ${{ inputs.terraform_action }} -auto-approve -var function-stage=${{ inputs.stage }}

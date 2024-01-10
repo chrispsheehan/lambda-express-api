@@ -4,7 +4,7 @@ resource "aws_s3_bucket" "lambda-bucket" {
 
 resource "aws_s3_object" "lambda-zip" {
   bucket        = aws_s3_bucket.lambda-bucket.id
-  key           = var.function-name
+  key           = local.lambda-name
   source        = data.archive_file.source.output_path
   etag          = filemd5(data.archive_file.source.output_path)
   force_destroy = true
@@ -12,7 +12,7 @@ resource "aws_s3_object" "lambda-zip" {
 
 resource "aws_lambda_function" "lambda" {
   filename      = data.archive_file.source.output_path
-  function_name = var.function-name
+  function_name = local.lambda-name
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "app.handler"
   runtime       = local.lambda-runtime
@@ -25,15 +25,15 @@ resource "aws_lambda_function" "lambda" {
 }
 
 resource "aws_lambda_permission" "this" {
-  statement_id  = "${var.function-name}-AllowAPIGatewayInvoke"
+  statement_id  = "${local.lambda-name}-AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.lambda.function_name
   principal     = "apigateway.amazonaws.com"
 }
 
 resource "aws_api_gateway_rest_api" "this" {
-  name        = "${var.function-name}-APIGateway"
-  description = "${var.function-name} API Gateway"
+  name        = "${local.lambda-name}-APIGateway"
+  description = "${local.lambda-name} API Gateway"
 }
 
 resource "aws_api_gateway_resource" "this" {
