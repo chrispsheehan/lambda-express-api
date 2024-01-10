@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "lambda-bucket" {
-  bucket = "${var.function-name}-bucket"
+  bucket = local.lambda-bucket
 }
 
 resource "aws_s3_object" "lambda-zip" {
