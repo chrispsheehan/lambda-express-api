@@ -13,12 +13,14 @@ jobs:
     dev:
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/checkout@v4
             - id: dev-deploy
               uses: ./.github/workflows/deploy-environment.yml
               with:
                 stage: dev
 
     get-url:
+        needs: dev
         runs-on: ubuntu-latest
         steps:
             - run: echo random-number ${{ steps.dev-deploy.outputs.api-url }}
