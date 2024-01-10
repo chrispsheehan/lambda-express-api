@@ -8,7 +8,7 @@ on:
 env:
   aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
   aws_region: ${{ vars.AWS_REGION }}
-  aws_role: ${{ vars.AWS_REGION }}
+  aws_role: ${{ vars.AWS_ROLE_VALIDATE_ONLY }}
 
 jobs:
   terraform-check:
