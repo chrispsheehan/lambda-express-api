@@ -5,20 +5,18 @@ on:
     push:
         branches: main
 
+permissions:
+    id-token: write
+    contents: read
+
 jobs:
     dev:
-        permissions:
-            id-token: write
-            contents: read
         uses: ./.github/workflows/deploy-environment.yml
         with:
             stage: dev
 
     dev-kill:
         needs: dev
-        permissions:
-            id-token: write
-            contents: read
         uses: ./.github/workflows/destroy-environment.yml
         with:
             stage: dev
