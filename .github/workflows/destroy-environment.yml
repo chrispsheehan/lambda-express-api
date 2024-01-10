@@ -1,11 +1,17 @@
 name: Destroy Environment
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
-      stage:
+      name:
+        type: choice
+        description: Environment to destroy
+        options: 
+        - dev
+        - qa
+      message:
         required: true
-        type: string
+
 env:
   aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
   aws_region: ${{ vars.AWS_REGION }}
