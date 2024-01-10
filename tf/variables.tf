@@ -9,15 +9,3 @@ variable "function-name" {
   description = "Name of the lambda function"
   default     = "lambda-express-api"
 }
-
-variable "lambda-folder" {
-  type        = string
-  description = "Name of the lambda folder"
-  default     = "lambda-functions"
-}
-
-variable "lambda-zip-path" {
-  type        = string
-  description = "Name of the lambda zip file path"
-  default     = "lambda-express-api.zip"
-}
