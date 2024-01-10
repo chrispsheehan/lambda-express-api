@@ -52,6 +52,7 @@ jobs:
           aws_region: ${{ env.aws_region }}
           aws_role: ${{ env.aws_role }}
           terraform_action: apply
+          stage: ${{ env.stage }}
   
   terraform-destroy:
     runs-on: ubuntu-latest
@@ -73,3 +74,4 @@ jobs:
           aws_region: ${{ env.aws_region }}
           aws_role: ${{ env.aws_role }}
           terraform_action: destroy
+          stage: ${{ env.stage }}
