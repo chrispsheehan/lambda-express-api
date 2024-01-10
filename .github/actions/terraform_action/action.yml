@@ -55,4 +55,10 @@ runs:
       run: |
         cd tf
         terraform ${{ inputs.terraform_action }} -auto-approve -var function-stage=${{ inputs.stage }}
-        echo "api_gateway_url=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
+
+    # - name: Get URL
+    #   shell: bash
+    #   id: action
+    #   run: |
+    #     cd tf
+    #     echo "api_gateway_url=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
