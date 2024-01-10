@@ -32,17 +32,17 @@ runs:
       with:
         fetch-depth: 0
 
-    - name: Select Workspace
-      shell: bash
-      run: |
-        cd tf
-        terraform workspace select -or-create ${{ inputs.stage }}
-
     - name: Init
       shell: bash
       run: |
         cd tf
         terraform init
+
+    - name: Select Workspace
+      shell: bash
+      run: |
+        cd tf
+        terraform workspace select -or-create ${{ inputs.stage }}
 
     - name: Action
       shell: bash
