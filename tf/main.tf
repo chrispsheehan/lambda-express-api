@@ -15,7 +15,7 @@ resource "aws_lambda_function" "test_lambda" {
   function_name = var.function-name
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "app.handler"
-  runtime = local.lambda-runtime
+  runtime       = local.lambda-runtime
 
   environment {
     variables = {
