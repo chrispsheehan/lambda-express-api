@@ -3,7 +3,7 @@ name: Destroy Environment
 on:
   workflow_dispatch:
     inputs:
-      name:
+      stage:
         type: choice
         description: Environment to destroy
         options: 
