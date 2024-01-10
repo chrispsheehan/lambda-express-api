@@ -1,7 +1,7 @@
 data "archive_file" "source" {
   type        = "zip"
   source_dir  = "../src"
-  output_path = "../${var.lambda-folder}/${var.lambda-zip-path}"
+  output_path = "../${local.lambda-folder}/${local.lambda-zip-path}"
 }
 
 data "aws_iam_policy_document" "assume_role" {
