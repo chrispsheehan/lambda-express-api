@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - pipeline-refactor
+      - main
 
 env:
   aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
