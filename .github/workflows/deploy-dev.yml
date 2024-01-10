@@ -11,6 +11,15 @@ permissions:
 
 jobs:
     dev:
-        uses: ./.github/workflows/deploy-environment.yml
-        with:
-            stage: dev
+        runs-on: ubuntu-latest
+        steps:
+            - id: dev-deploy
+              uses: ./.github/workflows/deploy-environment.yml
+              with:
+                stage: dev
+
+    get-url:
+        runs-on: ubuntu-latest
+        steps:
+            - run: echo random-number ${{ steps.dev-deploy.outputs.api-url }}
+              shell: bash

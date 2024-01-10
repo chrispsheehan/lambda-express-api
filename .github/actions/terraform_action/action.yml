@@ -17,6 +17,11 @@ inputs:
     description: 'Terraform workspace/environment to be assumed i.e. qa/dev etc'
     required: true
 
+outputs:
+  api-url:
+    description: "API Gateway URL"
+    value: ${{ steps.action.outputs.api_gateway_url }}
+
 runs:
   using: composite
   steps:
@@ -46,6 +51,8 @@ runs:
 
     - name: Action
       shell: bash
+      id: action
       run: |
         cd tf
         terraform ${{ inputs.terraform_action }} -auto-approve -var function-stage=${{ inputs.stage }}
+        echo "api_gateway_url=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
