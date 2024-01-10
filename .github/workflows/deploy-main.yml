@@ -46,3 +46,9 @@ jobs:
         run: |
             cd tf
             terraform apply -auto-approve
+
+      - name: destroy
+        id: destroy
+        run: |
+            cd tf
+            terraform destroy -auto-approve
