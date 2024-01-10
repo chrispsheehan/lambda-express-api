@@ -10,14 +10,9 @@ variable "function-name" {
   default     = "lambda-express-api"
 }
 
-variable "lambda-folder" {
+variable "function-stage" {
   type        = string
-  description = "Name of the lambda folder"
-  default     = "lambda-functions"
+  description = "Lambda api stage i.e. dev/qa/production"
+  default     = "dev"
 }
 
-variable "lambda-zip-path" {
-  type        = string
-  description = "Name of the lambda zip file path"
-  default     = "lambda-express-api.zip"
-}
