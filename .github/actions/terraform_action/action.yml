@@ -36,7 +36,7 @@ runs:
       shell: bash
       run: |
         cd tf
-        terraform select -or-create ${{ inputs.stage }}
+        terraform workspace select -or-create ${{ inputs.stage }}
 
     - name: Init
       shell: bash
