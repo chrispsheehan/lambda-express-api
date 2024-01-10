@@ -10,6 +10,9 @@ inputs:
   aws_role:
     description: 'AWS role to assume'
     required: true
+  terraform_action:
+    description: 'Terraform action to preform either apply/destroy'
+    required: true
 
 runs:
   using: composite
@@ -26,20 +29,14 @@ runs:
       with:
         fetch-depth: 0
 
-    - name: Format Check
-      shell: bash
-      run: |
-        cd tf
-        terraform fmt -diff -recursive -check
-
     - name: Init
       shell: bash
       run: |
         cd tf
         terraform init
 
-    - name: Validate
+    - name: Action
       shell: bash
       run: |
         cd tf
-        terraform validate
+        terraform ${{ inputs.terraform_action }} -auto-approve
