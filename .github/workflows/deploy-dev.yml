@@ -15,6 +15,7 @@ jobs:
             stage: dev
 
     kill:
+        needs: dev
         permissions:
             id-token: write
             contents: read
