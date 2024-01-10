@@ -17,6 +17,10 @@ env:
   aws_region: ${{ vars.AWS_REGION }}
   aws_role: ${{ vars.AWS_ROLE }}
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:  
   terraform-destroy:
     runs-on: ubuntu-latest
