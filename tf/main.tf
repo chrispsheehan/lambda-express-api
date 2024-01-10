@@ -16,7 +16,7 @@ resource "aws_lambda_function" "test_lambda" {
   filename      = data.archive_file.source.output_path
   function_name = var.function-name
   role          = aws_iam_role.iam_for_lambda.arn
-  handler       = "index.mjs"
+  handler       = "index.handler"
 
   runtime = "nodejs18.x"
 
