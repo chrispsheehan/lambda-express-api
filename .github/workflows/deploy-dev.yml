@@ -13,3 +13,11 @@ jobs:
         uses: ./.github/workflows/deploy-environment.yml
         with:
             stage: dev
+
+    kill:
+        permissions:
+            id-token: write
+            contents: read
+        uses: ./.github/workflows/destroy-environment.yml
+        with:
+            stage: dev

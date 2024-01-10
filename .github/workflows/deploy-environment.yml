@@ -44,21 +44,3 @@ jobs:
           aws_role: ${{ env.aws_role }}
           terraform_action: apply
           stage: ${{ inputs.stage }}
-  
-  terraform-destroy:
-    runs-on: ubuntu-latest
-    needs: terraform-apply
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Terraform Destroy
-        uses: ./.github/actions/terraform_action
-        with:
-          aws_account_id: ${{ env.aws_account_id }}
-          aws_region: ${{ env.aws_region }}
-          aws_role: ${{ env.aws_role }}
-          terraform_action: destroy
-          stage: ${{ inputs.stage }}
