@@ -11,24 +11,13 @@ permissions:
 
 jobs:
     dev:
-        runs-on: ubuntu-latest
-        steps:
-          - name: checkout
-            uses: actions/checkout@v4
-            with:
-              fetch-depth: 0
-          - id: dev-deploy
-            uses: ./.github/workflows/deploy-environment.yml
-            with:
-                stage: dev
-    # dev:
-    #     uses: ./.github/workflows/deploy-environment.yml
-    #     with:
-    #         stage: dev
+        uses: ./.github/workflows/deploy-environment.yml
+        with:
+            stage: dev
 
     get-url:
         needs: dev
         runs-on: ubuntu-latest
         steps:
-            - run: echo random-number ${{ steps.dev-deploy.outputs.api-url }}
+            - run: echo random-number ${{ steps.action.outputs.api-url }}
               shell: bash
