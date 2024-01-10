@@ -9,3 +9,10 @@ variable "function-name" {
   description = "Name of the lambda function"
   default     = "lambda-express-api"
 }
+
+variable "function-stage" {
+  type        = string
+  description = "Lambda api stage i.e. dev/qa/production"
+  default     = "dev"
+}
+

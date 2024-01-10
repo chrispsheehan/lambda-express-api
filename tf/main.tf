@@ -11,14 +11,11 @@ resource "aws_s3_object" "lambda-zip" {
 }
 
 resource "aws_lambda_function" "test_lambda" {
-  # If the file is not in the current working directory you will need to include a
-  # path.module in the filename.
   filename      = data.archive_file.source.output_path
   function_name = var.function-name
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "app.handler"
-
-  runtime = "nodejs18.x"
+  runtime = local.lambda-runtime
 
   environment {
     variables = {
@@ -28,15 +25,15 @@ resource "aws_lambda_function" "test_lambda" {
 }
 
 resource "aws_lambda_permission" "api_gateway" {
-  statement_id  = "AllowAPIGatewayInvoke"
+  statement_id  = "${var.function-name}-AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.test_lambda.function_name
   principal     = "apigateway.amazonaws.com"
 }
 
 resource "aws_api_gateway_rest_api" "my_api" {
-  name        = "MyAPIGateway"
-  description = "My API Gateway"
+  name        = "${var.function-name}-APIGateway"
+  description = "${var.function-name} API Gateway"
 }
 
 resource "aws_api_gateway_resource" "my_resource" {
@@ -77,7 +74,7 @@ resource "aws_api_gateway_deployment" "example" {
 resource "aws_api_gateway_stage" "example" {
   deployment_id = aws_api_gateway_deployment.example.id
   rest_api_id   = aws_api_gateway_rest_api.my_api.id
-  stage_name    = "example"
+  stage_name    = var.function-stage
 }
 
 resource "aws_api_gateway_method_settings" "example" {
