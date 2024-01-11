@@ -7,7 +7,7 @@ on:
 
 env:
     app_folder: src
-    app_zip_path: lambda-express-api
+    app_zip_path: lambda-express-api.zip
 
 jobs:
     build:
