@@ -19,28 +19,38 @@ jobs:
             with:
               fetch-depth: 0
     
-          - name: npm install
+          - name: Build
             run: |
                 cd ${{ env.app_folder }}
                 npm install
     
-          - name: zip
+          - name: Zip
             run: |
                 zip -r ${{ env.app_zip_path }} ${{ env.app_folder }}
     
           - name: Upload build artefact
             uses: actions/upload-artifact@v3
             with:
-                name: zipped code
+                name: zipped-code
                 path: ${{ env.app_zip_path }}
 
-    # dev:
-    #     permissions:
-    #         id-token: write
-    #         contents: read
-    #     uses: ./.github/workflows/apply-infra.yml
-    #     with:
-    #         stage: dev
+    dev:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Download a single artifact
+            uses: actions/download-artifact@v3
+            with:
+                name: zipped-code
+          - name: debug
+            run: ls -r
+      
+
+        # permissions:
+        #     id-token: write
+        #     contents: read
+        # uses: ./.github/workflows/apply-infra.yml
+        # with:
+        #     stage: dev
 
     # get-url:
     #     needs: dev
