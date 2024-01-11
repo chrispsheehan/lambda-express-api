@@ -15,7 +15,7 @@ jobs:
     build:
         env:
             app_folder: src
-            app_zip_path: ${GITHUB_WORKSPACE}/lambda-express-api.zip
+            app_zip_path: lambda-express-api.zip
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v4
