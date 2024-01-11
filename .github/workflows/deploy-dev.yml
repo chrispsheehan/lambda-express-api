@@ -39,7 +39,7 @@ jobs:
 
     dev:
         env:
-            app_zip_path: ${GITHUB_WORKSPACE}/lambda-express-api.zip
+            app_zip_path: lambda-express-api.zip
         runs-on: ubuntu-latest
         needs: build
         permissions:
@@ -50,8 +50,8 @@ jobs:
             uses: actions/download-artifact@v3
             with:
                 name: zipped-code
-                path: ${{ env.app_zip_path }}
-          - run: ls -r ${GITHUB_WORKSPACE}
+                path: /${{ env.app_zip_path }}
+          - run: ls
 
         #   - name: Configure AWS Credentials
         #     uses: aws-actions/configure-aws-credentials@v4
