@@ -16,7 +16,7 @@ variable "function-stage" {
   default     = "dev"
 }
 
-variable "lambda-zip-zip" {
+variable "lambda-zip-path" {
   type        = string
   description = "Lambda code (zipped) to be deployed"
 }
