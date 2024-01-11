@@ -1,5 +1,5 @@
 data "local_file" "lambda-zip" {
-  filename = local.lambda-zip-path
+  filename = var.lambda-zip-zip
 }
 
 data "aws_iam_policy_document" "assume_role" {
