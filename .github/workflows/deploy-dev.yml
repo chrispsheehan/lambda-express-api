@@ -49,6 +49,7 @@ jobs:
             uses: actions/download-artifact@v3
             with:
                 name: zipped-code
+
           - name: Configure AWS Credentials
             uses: aws-actions/configure-aws-credentials@v4
             with:
@@ -59,26 +60,31 @@ jobs:
           - uses: actions/checkout@v4
             with:
                 fetch-depth: 0
-          
-          - name: Init
-            shell: bash
-            run: |
-                cd tf
-                terraform init
 
-          - name: Select Workspace
+          - name: debug
             shell: bash
             run: |
-                cd tf
-                terraform workspace select -or-create dev
-                terraform init
+                ls -r
+          
+        #   - name: Init
+        #     shell: bash
+        #     run: |
+        #         cd tf
+        #         terraform init
+
+        #   - name: Select Workspace
+        #     shell: bash
+        #     run: |
+        #         cd tf
+        #         terraform workspace select -or-create dev
+        #         terraform init
         
-          - name: Action
-            shell: bash
-            id: action
-            run: |
-                cd tf
-                terraform apply -auto-approve -var function-stage=dev -var lambda-zip-path=${{ env.app_zip_path }} --replace=aws_s3_object.lambda-zip
+        #   - name: Action
+        #     shell: bash
+        #     id: action
+        #     run: |
+        #         cd tf
+        #         terraform apply -auto-approve -var function-stage=dev -var lambda-zip-path=${{ env.app_zip_path }} --replace=aws_s3_object.lambda-zip
 
     # get-url:
     #     needs: dev
