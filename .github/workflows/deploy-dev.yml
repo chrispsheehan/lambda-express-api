@@ -44,11 +44,17 @@ jobs:
             id-token: write
             contents: read
         steps:
+          - uses: actions/checkout@v4
+            with:
+                fetch-depth: 0
+
           - name: Download a single artifact
             uses: actions/download-artifact@v3
             with:
                 name: zipped-code
-          - run: ls
+                path: tf
+
+          - run: ls tf
 
           - name: Configure AWS Credentials
             uses: aws-actions/configure-aws-credentials@v4
@@ -56,11 +62,7 @@ jobs:
                 aws-region: ${{ env.aws_region }}
                 role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/${{ env.aws_role }}
                 role-session-name: GitHubActions
-          
-          - uses: actions/checkout@v4
-            with:
-                fetch-depth: 0
-          
+
           - name: Init
             shell: bash
             run: |
@@ -79,7 +81,7 @@ jobs:
             id: action
             run: |
                 cd tf
-                terraform apply -auto-approve -var function-stage=dev -var lambda-zip-path=../${{ env.app_zip_path }} --replace=aws_s3_object.lambda-zip
+                terraform apply -auto-approve -var function-stage=dev -var lambda-zip-path=${{ env.app_zip_path }} --replace=aws_s3_object.lambda-zip
 
     # get-url:
     #     needs: dev
