@@ -64,7 +64,7 @@ jobs:
             shell: bash
             run: |
                 cd tf
-                terraform init
+                terraform init --upgrade
         
           - name: Select Workspace
             shell: bash
