@@ -1,7 +1,5 @@
-data "archive_file" "source" {
-  type        = "zip"
-  source_dir  = "../src"
-  output_path = "../${local.lambda-folder}/${local.lambda-zip-path}"
+data "local_file" "lambda-zip" {
+  filename = local.lambda-zip-path
 }
 
 data "aws_iam_policy_document" "assume_role" {
@@ -15,9 +13,4 @@ data "aws_iam_policy_document" "assume_role" {
 
     actions = ["sts:AssumeRole"]
   }
-}
-
-resource "aws_iam_role" "iam_for_lambda" {
-  name               = "${local.lambda-name}-iam"
-  assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }

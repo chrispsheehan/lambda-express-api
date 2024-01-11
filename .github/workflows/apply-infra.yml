@@ -37,11 +37,6 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: build app
-        run: |
-          cd src
-          npm install
-
       - name: Terraform Apply
         uses: ./.github/actions/terraform_action
         with:

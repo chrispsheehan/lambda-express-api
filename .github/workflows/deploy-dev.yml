@@ -5,19 +5,46 @@ on:
     push:
         branches: main
 
-permissions:
-    id-token: write
-    contents: read
+env:
+    app_folder: src
+    app_zip_path: lambda-express-api
 
 jobs:
-    dev:
-        uses: ./.github/workflows/deploy-environment.yml
-        with:
-            stage: dev
-
-    get-url:
-        needs: dev
+    build:
         runs-on: ubuntu-latest
+        outputs:
+          cloudfront_distribution_id: ${{ steps.apply.outputs.DISTRIBUTION_ID }}
         steps:
-            - run: echo random-number ${{ steps.action.outputs.api-url }}
-              shell: bash
+          - uses: actions/checkout@v4
+            with:
+              fetch-depth: 0
+    
+          - name: npm install
+            run: |
+                cd ${{ env.app_folder }}
+                npm install
+    
+          - name: zip
+            run: |
+                zip -r ${{ env.app_zip_path }} ${{ env.app_folder }}
+    
+          - name: Upload build artefact
+            uses: actions/upload-artifact@v3
+            with:
+                name: zipped code
+                path: ${{ env.app_zip_path }}
+
+    # dev:
+    #     permissions:
+    #         id-token: write
+    #         contents: read
+    #     uses: ./.github/workflows/apply-infra.yml
+    #     with:
+    #         stage: dev
+
+    # get-url:
+    #     needs: dev
+    #     runs-on: ubuntu-latest
+    #     steps:
+    #         - run: echo random-number ${{ steps.action.outputs.api-url }}
+    #           shell: bash
