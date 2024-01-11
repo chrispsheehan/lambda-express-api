@@ -50,7 +50,6 @@ jobs:
             uses: actions/download-artifact@v3
             with:
                 name: zipped-code
-                path: /${{ env.app_zip_path }}
           - run: ls
 
         #   - name: Configure AWS Credentials
