@@ -81,7 +81,7 @@ jobs:
             id: action
             run: |
                 cd tf
-                terraform apply -auto-approve -var function-stage=dev -var lambda-zip-path=${{ env.app_zip_path }} --replace=aws_s3_object.lambda-zip --replace=aws_lambda_function.lambda
+                terraform apply -auto-approve -var function-stage=dev -var lambda-zip-path=${{ env.app_zip_path }} --replace=aws_lambda_function.lambda
 
     # get-url:
     #     needs: dev
