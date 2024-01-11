@@ -1,31 +1,16 @@
-resource "aws_s3_bucket" "lambda-bucket" {
-  bucket = local.lambda-bucket
-}
-
-resource "aws_s3_object" "lambda-zip" {
-  bucket        = aws_s3_bucket.lambda-bucket.id
-  key           = local.lambda-name
-  source        = data.local_file.lambda-zip.filename
-  etag          = filemd5(data.local_file.lambda-zip.filename)
-  force_destroy = true
-}
-
 resource "aws_iam_role" "iam_for_lambda" {
   name               = "${local.lambda-name}-iam"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
 resource "aws_lambda_function" "lambda" {
-  depends_on = [ aws_s3_object.lambda-zip ]
-
   function_name = local.lambda-name
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "app.handler"
   runtime       = local.lambda-runtime
 
-  s3_bucket        = aws_s3_bucket.lambda-bucket.bucket
-  s3_key           = local.lambda-name
-  source_code_hash = filebase64(data.local_file.lambda-zip.filename)
+  filename         = data.local_file.lambda-zip.filename
+  source_code_hash = data.local_file.lambda-zip.content_base64
 
   environment {
     variables = {
