@@ -1,10 +1,13 @@
 const express = require('express');
-const serverless = require('serverless-http');
-
+const awsServerlessExpress = require('aws-serverless-express');
 const app = express();
 
 app.get('/hello', (req, res) => {
   res.send('Hello, this is your AWS Lambda function!');
 });
 
-module.exports.handler = serverless(app);
+const server = awsServerlessExpress.createServer(app);
+
+exports.handler = (event, context) => {
+  awsServerlessExpress.proxy(server, event, context);
+};
