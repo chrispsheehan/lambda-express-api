@@ -16,11 +16,14 @@ resource "aws_iam_role" "iam_for_lambda" {
 }
 
 resource "aws_lambda_function" "lambda" {
-  filename      = data.local_file.lambda-zip.filename
   function_name = local.lambda-name
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "app.handler"
   runtime       = local.lambda-runtime
+
+  s3_bucket        = aws_s3_bucket.lambda-bucket.bucket
+  s3_key           = local.lambda-name
+  source_code_hash = filebase64(data.local_file.lambda-zip.filename)
 
   environment {
     variables = {
