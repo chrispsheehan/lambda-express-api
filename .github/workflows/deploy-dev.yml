@@ -71,6 +71,7 @@ jobs:
             run: |
                 cd tf
                 terraform workspace select -or-create dev
+                terraform init
         
           - name: Action
             shell: bash
