@@ -26,7 +26,7 @@ jobs:
         needs: setup
         env:
             app_folder: src
-            app_zip_path: ${{ needs.setup.outputs.sha_short }}-lambda.zip
+            # app_zip_path: ${{ needs.setup.outputs.sha_short }}-lambda.zip
         runs-on: ubuntu-latest
         outputs:
           app_zip_path: ${{ steps.set_sha.outputs.APP_ZIP_PATH }}
@@ -42,7 +42,7 @@ jobs:
     
           - name: Zip
             run: |
-                zip -r ${{ env.app_zip_path }} ${{ env.app_folder }}
+                zip -r "${{ needs.setup.outputs.sha_short }}-lambda.zip" ${{ env.app_folder }}
     
           - name: Upload build artefact
             uses: actions/upload-artifact@v3
@@ -51,7 +51,7 @@ jobs:
                 path: ${{ env.app_zip_path }}
 
           - id: set-zip-path
-            run: echo "APP_ZIP_PATH=$(echo ${{ env.app_zip_path }})" >> $GITHUB_OUTPUT
+            run: echo "APP_ZIP_PATH=$(echo '${{ needs.setup.outputs.sha_short }}-lambda.zip')" >> $GITHUB_OUTPUT
 
     dev:
         runs-on: ubuntu-latest
