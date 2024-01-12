@@ -25,7 +25,7 @@ jobs:
     build:
         needs: setup
         env:
-            app_folder: src
+            app_folder: src/
             app_zip_path: ${{ needs.setup.outputs.sha_short }}-lambda.zip
         runs-on: ubuntu-latest
         outputs:
