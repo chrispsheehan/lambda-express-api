@@ -54,12 +54,14 @@ jobs:
           - id: set-zip-path
             run: echo "APP_ZIP_PATH=$(echo ${{ env.app_zip_path }})" >> $GITHUB_OUTPUT
 
-    dev:
+    deploy:
         runs-on: ubuntu-latest
         needs: build
         permissions:
             id-token: write
             contents: read
+        outputs:
+          api_gateway_url: ${{ steps.action.outputs.API_GATEWAY_URL }}
         steps:
           - uses: actions/checkout@v4
             with:
@@ -99,10 +101,11 @@ jobs:
             run: |
                 cd tf
                 terraform apply -auto-approve -var function-stage=dev -var lambda-zip-path=${{ needs.build.outputs.app_zip_path }}
+                echo "API_GATEWAY_URL=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
 
-    # get-url:
-    #     needs: dev
-    #     runs-on: ubuntu-latest
-    #     steps:
-    #         - run: echo random-number ${{ steps.action.outputs.api-url }}
-    #           shell: bash
+    test:
+        needs: deploy
+        runs-on: ubuntu-latest
+        steps:
+            - run: echo url is ${{ needs.deploy.outputs.api_gateway_url }}
+              shell: bash
