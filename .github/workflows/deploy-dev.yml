@@ -10,6 +10,7 @@ env:
     aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
     aws_region: ${{ vars.AWS_REGION }}
     aws_role: ${{ vars.AWS_ROLE }}
+    stage: dev
       
 
 jobs:
@@ -92,7 +93,7 @@ jobs:
             shell: bash
             run: |
                 cd tf
-                terraform workspace select -or-create dev
+                terraform workspace select -or-create ${{ env.stage }}
                 terraform init
         
           - name: Action
@@ -100,7 +101,7 @@ jobs:
             id: action
             run: |
                 cd tf
-                terraform apply -auto-approve -var function-stage=dev -var lambda-zip-path=${{ needs.build.outputs.app_zip_path }}
+                terraform apply -auto-approve -var function-stage=${{ env.stage }} -var lambda-zip-path=${{ needs.build.outputs.app_zip_path }}
                 echo "API_GATEWAY_URL=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
 
     test:
