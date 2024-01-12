@@ -73,8 +73,6 @@ jobs:
                 name: zipped-code
                 path: tf
 
-          - run: ls tf
-
           - name: Configure AWS Credentials
             uses: aws-actions/configure-aws-credentials@v4
             with:
