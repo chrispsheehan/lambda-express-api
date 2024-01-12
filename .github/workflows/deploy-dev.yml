@@ -13,10 +13,23 @@ env:
       
 
 jobs:
+    setup:
+      runs-on: ubuntu-latest
+      outputs:
+        sha_short: ${{ steps.set_sha.outputs.GITHUB_SHA_SHORT }}
+      steps:
+        - uses: actions/checkout@v4
+        - id: setup-id
+          run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_OUTPUT
+
     build:
+        needs: setup
         env:
             app_folder: src
+            app_zip_path: ${{ needs.setup.outputs.sha_short }}-lambda.zip
         runs-on: ubuntu-latest
+        outputs:
+          app_zip_path: ${{ steps.set_sha.outputs.APP_ZIP_PATH }}
         steps:
           - uses: actions/checkout@v4
             with:
@@ -36,6 +49,9 @@ jobs:
             with:
                 name: zipped-code
                 path: ${{ env.app_zip_path }}
+
+          - id: set-zip-path
+            run: echo "APP_ZIP_PATH=$(echo ${{ env.app_zip_path }})" >> $GITHUB_OUTPUT
 
     dev:
         runs-on: ubuntu-latest
@@ -81,7 +97,7 @@ jobs:
             id: action
             run: |
                 cd tf
-                terraform apply -auto-approve -var function-stage=dev -var lambda-zip-path=${{ env.app_zip_path }}
+                terraform apply -auto-approve -var function-stage=dev -var lambda-zip-path=${{ needs.build.outputs.app_zip_path }}
 
     # get-url:
     #     needs: dev
