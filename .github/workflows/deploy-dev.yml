@@ -42,7 +42,7 @@ jobs:
     
           - name: Zip
             run: |
-                zip -r ${{ env.app_zip_path }} ${{ env.app_folder }}
+                zip -r ${{ env.app_zip_path }} ${{ env.app_folder }}/*
     
           - name: Upload build artefact
             uses: actions/upload-artifact@v3
