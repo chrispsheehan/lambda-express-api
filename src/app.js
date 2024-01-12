@@ -3,7 +3,7 @@ const awsServerlessExpress = require('aws-serverless-express');
 const app = express();
 
 app.get('/hello', (req, res) => {
-  res.send('Hello, this is your AWS Lambda function!');
+  res.send('Hello, this is your AWS Lambda function, testy badgers!');
 });
 
 const server = awsServerlessExpress.createServer(app);
