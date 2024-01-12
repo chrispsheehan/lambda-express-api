@@ -49,7 +49,7 @@ jobs:
             uses: actions/upload-artifact@v3
             with:
                 name: zipped-code
-                path: ${{ env.app_zip_path }}
+                path: ${{ env.app_folder }}/${{ env.app_zip_path }}
 
           - id: set-zip-path
             run: echo "APP_ZIP_PATH=$(echo ${{ env.app_zip_path }})" >> $GITHUB_OUTPUT
