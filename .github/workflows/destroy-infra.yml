@@ -46,7 +46,7 @@ jobs:
         shell: bash
         run: |
             cd tf
-            terraform workspace select -or-create ${{ env.stage }}
+            terraform workspace select -or-create ${{ inputs.stage }}
             terraform init
     
       - name: Action
@@ -54,4 +54,4 @@ jobs:
         id: action
         run: |
             cd tf
-            terraform destroy -auto-approve -var function-stage=${{ env.stage }} -var lambda-zip-path=this_file_doesnt_exist.zip
+            terraform destroy -auto-approve -var function-stage=${{ inputs.stage }} -var lambda-zip-path=this_file_doesnt_exist.zip
