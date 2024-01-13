@@ -22,19 +22,36 @@ permissions:
   contents: read
 
 jobs:  
-  terraform-destroy:
+  destroy:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+            fetch-depth: 0
 
-      - name: Terraform Destroy
-        uses: ./.github/actions/terraform_action
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws_account_id: ${{ env.aws_account_id }}
-          aws_region: ${{ env.aws_region }}
-          aws_role: ${{ env.aws_role }}
-          terraform_action: destroy
-          stage: ${{ inputs.stage }}
+            aws-region: ${{ env.aws_region }}
+            role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/${{ env.aws_role }}
+            role-session-name: GitHubActions
+
+      - name: Init
+        shell: bash
+        run: |
+            cd tf
+            terraform init
+
+      - name: Select Workspace
+        shell: bash
+        run: |
+            cd tf
+            terraform workspace select -or-create ${{ env.stage }}
+            terraform init
+    
+      - name: Action
+        shell: bash
+        id: action
+        run: |
+            cd tf
+            terraform destroy -auto-approve -var function-stage=${{ env.stage }} -var lambda-zip-path=this_file_doesnt_exist.zip
