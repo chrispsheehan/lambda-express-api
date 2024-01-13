@@ -11,7 +11,6 @@ env:
     aws_role: ${{ vars.AWS_ROLE }}
     stage: dev
       
-
 jobs:
     setup:
       runs-on: ubuntu-latest
