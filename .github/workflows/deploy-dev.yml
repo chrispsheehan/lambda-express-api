@@ -3,14 +3,79 @@ name: Deploy Dev
 on:
     workflow_dispatch:
     push:
-        branches: main
+        branches: s3-version-upload
 
 permissions:
   id-token: write
   contents: read
 
+env:
+  aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
+  aws_region: ${{ vars.AWS_REGION }}
+  aws_role: ${{ vars.AWS_ROLE }}
+  s3_version_bucket: "${{ github.event.repository.name }}-versions"
+
 jobs:
-  dev:
-    uses: ./.github/workflows/deploy.yml
-    with:
-      stage: dev
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      sha_short: ${{ steps.set_sha.outputs.GITHUB_SHA_SHORT }}
+      s3_bucket: ${{ steps.s3_bucket.outputs.S3_BUCKET }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+            aws-region: ${{ env.aws_region }}
+            role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/${{ env.aws_role }}
+            role-session-name: GitHubActions
+
+      - id: set_sha
+        run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_OUTPUT
+
+      - name: Setup s3 version bucket
+        env:
+          S3_BUCKET_NAME: ${{ env.s3_version_bucket }}
+        shell: bash
+        run: |
+          bash bin/setup-backend.sh
+
+  # build:
+  #     needs: setup
+  #     env:
+  #         app_folder: src/
+  #         app_zip_path: ${{ needs.setup.outputs.sha_short }}-lambda.zip
+  #     runs-on: ubuntu-latest
+  #     outputs:
+  #       app_zip_path: ${{ steps.set-zip-path.outputs.APP_ZIP_PATH }}
+  #     steps:
+  #       - uses: actions/checkout@v4
+  #         with:
+  #           fetch-depth: 0
+  
+  #       - name: Build
+  #         run: |
+  #             cd ${{ env.app_folder }}
+  #             npm install
+  
+  #       - name: Zip
+  #         run: |
+  #             cd ${{ env.app_folder }}
+  #             zip -r ${{ env.app_zip_path }} *
+  
+  #       - name: Upload build artefact
+  #         uses: actions/upload-artifact@v3
+  #         with:
+  #             name: zipped-code
+  #             path: ${{ env.app_folder }}/${{ env.app_zip_path }}
+
+  #       - id: set-zip-path
+  #         run: echo "APP_ZIP_PATH=$(echo ${{ env.app_zip_path }})" >> $GITHUB_OUTPUT
+
+  # dev:
+  #   uses: ./.github/workflows/deploy.yml
+  #   with:
+  #     stage: dev
