@@ -48,11 +48,10 @@ jobs:
       - name: Download version from s3
         env:
           S3_BUCKET_NAME: "${{ github.event.repository.name }}-versions"
-          S3_FILE_NAME: ./${{ env.version_file }}
+          S3_FILE_NAME: ./tf/${{ env.version_file }}
         shell: bash
         run: |
           bash bin/download-s3-file.sh
-          echo $(ls -r)
 
       - name: Init
         shell: bash
