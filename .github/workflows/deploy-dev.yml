@@ -83,4 +83,3 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       stage: dev
-      version: ${{ needs.setup.outputs.sha_short }}

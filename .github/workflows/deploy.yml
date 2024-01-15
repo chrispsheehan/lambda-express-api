@@ -7,16 +7,12 @@ on:
         required: true
         type: string
         description: Environment to deploy
-      version:
-        required: true
-        type: string
 
 env:
   aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
   aws_region: ${{ vars.AWS_REGION }}
   aws_role: ${{ vars.AWS_ROLE }}
   stage: ${{ inputs.stage }}
-  version_file: ${{ inputs.version}}.zip
       
 jobs:
   setup:
@@ -48,7 +44,7 @@ jobs:
       - name: Download version from s3
         env:
           S3_BUCKET_NAME: "${{ github.event.repository.name }}-versions"
-          S3_FILE_NAME: ./tf/${{ env.version_file }}
+          S3_FILE_NAME: ./tf/${{ needs.setup.outputs.sha_short }}.zip
         shell: bash
         run: |
           bash bin/download-s3-file.sh
