@@ -54,30 +54,30 @@ jobs:
           bash bin/download-s3-file.sh
           echo $(ls -r)
 
-  #     - name: Init
-  #       shell: bash
-  #       run: |
-  #           cd tf
-  #           terraform init
+      - name: Init
+        shell: bash
+        run: |
+            cd tf
+            terraform init
 
-  #     - name: Select Workspace
-  #       shell: bash
-  #       run: |
-  #           cd tf
-  #           terraform workspace select -or-create ${{ env.stage }}
-  #           terraform init
+      - name: Select Workspace
+        shell: bash
+        run: |
+            cd tf
+            terraform workspace select -or-create ${{ env.stage }}
+            terraform init
     
-  #     - name: Action
-  #       shell: bash
-  #       id: action
-  #       run: |
-  #           cd tf
-  #           terraform apply -auto-approve -var function-stage=${{ env.stage }} -var lambda-zip-path=${{ needs.setup.outputs.sha_short }}.zip
-  #           echo "API_GATEWAY_URL=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
+      - name: Action
+        shell: bash
+        id: action
+        run: |
+            cd tf
+            terraform apply -auto-approve -var function-stage=${{ env.stage }} -var lambda-zip-path=${{ needs.setup.outputs.sha_short }}.zip
+            echo "API_GATEWAY_URL=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
 
-  # test:
-  #     needs: deploy
-  #     runs-on: ubuntu-latest
-  #     steps:
-  #         - run: echo url is ${{ needs.deploy.outputs.api_gateway_url }}
-  #           shell: bash
+  test:
+      needs: deploy
+      runs-on: ubuntu-latest
+      steps:
+          - run: echo url is ${{ needs.deploy.outputs.api_gateway_url }}
+            shell: bash
