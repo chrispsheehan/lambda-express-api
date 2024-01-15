@@ -17,73 +17,69 @@ env:
 jobs:
   setup:
     runs-on: ubuntu-latest
-    env:
-      sha_short: $(echo $GITHUB_SHA | cut -c 1-6)
-    # outputs:
-    #   sha_short: ${{ steps.set_sha.outputs.GITHUB_SHA_SHORT }}
+    outputs:
+      sha_short: ${{ steps.set_sha.outputs.GITHUB_SHA_SHORT }}
     steps:
-      - run: echo "asasasasas ${{ env.sha_short }}"
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      # - uses: actions/checkout@v4
-      #   with:
-      #     fetch-depth: 0
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+            aws-region: ${{ env.aws_region }}
+            role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/${{ env.aws_role }}
+            role-session-name: GitHubActions
 
-      # - name: Configure AWS Credentials
-      #   uses: aws-actions/configure-aws-credentials@v4
-      #   with:
-      #       aws-region: ${{ env.aws_region }}
-      #       role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/${{ env.aws_role }}
-      #       role-session-name: GitHubActions
+      - id: set_sha
+        run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_OUTPUT
 
-      # - id: set_sha
-      #   run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_OUTPUT
+      - name: Setup s3 version bucket
+        env:
+          S3_BUCKET_NAME: ${{ github.event.repository.name }}-versions
+        shell: bash
+        run: |
+          bash bin/create-s3-bucket.sh
 
-      # - name: Setup s3 version bucket
-      #   env:
-      #     S3_BUCKET_NAME: ${{ github.event.repository.name }}-versions
-      #   shell: bash
-      #   run: |
-      #     bash bin/create-s3-bucket.sh
-
-  # build:
-  #     needs: setup
-  #     env:
-  #         app_folder: src/
-  #     runs-on: ubuntu-latest
-  #     steps:
-  #       - uses: actions/checkout@v4
-  #         with:
-  #           fetch-depth: 0
+  build:
+      needs: setup
+      env:
+          app_folder: src/
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
   
-  #       - name: Build
-  #         run: |
-  #             cd ${{ env.app_folder }}
-  #             npm install
+        - name: Build
+          run: |
+              cd ${{ env.app_folder }}
+              npm install
   
-  #       - name: Zip
-  #         run: |
-  #             cd ${{ env.app_folder }}
-  #             zip -r ${{ needs.setup.outputs.sha_short }}.zip *
+        - name: Zip
+          run: |
+              cd ${{ env.app_folder }}
+              zip -r ${{ needs.setup.outputs.sha_short }}.zip *
 
-  #       - name: Configure AWS Credentials
-  #         uses: aws-actions/configure-aws-credentials@v4
-  #         with:
-  #             aws-region: ${{ env.aws_region }}
-  #             role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/${{ env.aws_role }}
-  #             role-session-name: GitHubActions
+        - name: Configure AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v4
+          with:
+              aws-region: ${{ env.aws_region }}
+              role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/${{ env.aws_role }}
+              role-session-name: GitHubActions
   
-  #       - name: Uploadfile to s3
-  #         env:
-  #           S3_BUCKET_NAME: ${{ github.event.repository.name }}-versions
-  #           S3_FILE_PATH: ${{ env.app_folder }}${{ needs.setup.outputs.sha_short }}.zip
-  #         shell: bash
-  #         run: |
-  #           bash bin/upload-s3-file.sh
+        - name: Uploadfile to s3
+          env:
+            S3_BUCKET_NAME: ${{ github.event.repository.name }}-versions
+            S3_FILE_PATH: ${{ env.app_folder }}${{ needs.setup.outputs.sha_short }}.zip
+          shell: bash
+          run: |
+            bash bin/upload-s3-file.sh
 
-  # dev:
-  #   needs:
-  #     - setup
-  #     - build
-  #   uses: ./.github/workflows/deploy.yml
-  #   with:
-  #     stage: dev
+  dev:
+    needs:
+      - setup
+      - build
+    uses: ./.github/workflows/deploy.yml
+    with:
+      stage: dev
