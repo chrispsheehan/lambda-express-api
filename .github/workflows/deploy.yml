@@ -89,6 +89,10 @@ jobs:
   test:
     needs: deploy
     runs-on: ubuntu-latest
+    env:
+      API_URL: ${{ needs.deploy.outputs.api_gateway_url }}/hello
     steps:
-        - run: echo url is ${{ needs.deploy.outputs.api_gateway_url }}
-          shell: bash
+      - name: Test
+        shell: bash
+        run: |
+          bash bin/curl-check.sh
