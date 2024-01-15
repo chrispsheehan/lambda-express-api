@@ -69,7 +69,7 @@ jobs:
         - name: Uploadfile to s3
           env:
             S3_BUCKET_NAME: ${{ env.s3_version_bucket }}
-            S3_FILE_PATH: ${{ env.app_folder }}/${{ env.app_zip_path }}
+            S3_FILE_PATH: ${{ env.app_folder }}${{ env.app_zip_path }}
           shell: bash
           run: |
             bash bin/upload-s3-file.sh
