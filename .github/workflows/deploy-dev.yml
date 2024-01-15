@@ -83,3 +83,10 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       stage: dev
+
+  qa:
+    needs:
+      - dev
+    uses: ./.github/workflows/deploy.yml
+    with:
+      stage: qa
