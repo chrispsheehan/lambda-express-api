@@ -22,7 +22,7 @@ aws s3 cp s3://$S3_BUCKET_NAME/$basename ./$S3_FILE_NAME
 # Check if the download was successful
 if [ $? -eq 0 ]; then
     echo "File downloaded successfully."
-    exit 1
 else
-    echo "Failed to download file. Check your AWS credentials and the specified S3 bucket/object key."
+    echo "Failed to download file."
+    exit 1
 fi
