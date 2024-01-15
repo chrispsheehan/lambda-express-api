@@ -19,7 +19,7 @@ echo $(ls)
 echo $(ls src)
 
 # Use the AWS CLI to upload the file to S3
-aws s3 cp ./$S3_FILE_PATH s3://$S3_BUCKET_NAME/$S3_FILE_PATH
+aws s3 cp ./$S3_FILE_PATH s3://$S3_BUCKET_NAME/$S3_FILE_PATH --debug
 
 # Check if the upload was successful
 if [ $? -eq 0 ]; then
