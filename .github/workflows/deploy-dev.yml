@@ -1,9 +1,8 @@
 name: Deploy Dev
 
 on:
-    workflow_dispatch:
-    push:
-        branches: main
+  push:
+      branches: main
 
 permissions:
   id-token: write
@@ -42,39 +41,39 @@ jobs:
           bash bin/create-s3-bucket.sh
 
   build:
-      needs: setup
-      env:
-          app_folder: src/
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-          with:
-            fetch-depth: 0
-  
-        - name: Build
-          run: |
-              cd ${{ env.app_folder }}
-              npm install
-  
-        - name: Zip
-          run: |
-              cd ${{ env.app_folder }}
-              zip -r ${{ needs.setup.outputs.sha_short }}.zip *
+    needs: setup
+    env:
+        app_folder: src/
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-        - name: Configure AWS Credentials
-          uses: aws-actions/configure-aws-credentials@v4
-          with:
-              aws-region: ${{ env.aws_region }}
-              role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/${{ env.aws_role }}
-              role-session-name: GitHubActions
-  
-        - name: Uploadfile to s3
-          env:
-            S3_BUCKET_NAME: ${{ github.event.repository.name }}-versions
-            S3_FILE_PATH: ${{ env.app_folder }}${{ needs.setup.outputs.sha_short }}.zip
-          shell: bash
-          run: |
-            bash bin/upload-s3-file.sh
+      - name: Build
+        run: |
+            cd ${{ env.app_folder }}
+            npm install
+
+      - name: Zip
+        run: |
+            cd ${{ env.app_folder }}
+            zip -r ${{ needs.setup.outputs.sha_short }}.zip *
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+            aws-region: ${{ env.aws_region }}
+            role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/${{ env.aws_role }}
+            role-session-name: GitHubActions
+
+      - name: Uploadfile to s3
+        env:
+          S3_BUCKET_NAME: ${{ github.event.repository.name }}-versions
+          S3_FILE_PATH: ${{ env.app_folder }}${{ needs.setup.outputs.sha_short }}.zip
+        shell: bash
+        run: |
+          bash bin/upload-s3-file.sh
 
   dev:
     needs:
@@ -83,10 +82,3 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       stage: dev
-
-  qa:
-    needs:
-      - dev
-    uses: ./.github/workflows/deploy.yml
-    with:
-      stage: qa

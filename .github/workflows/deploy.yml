@@ -7,6 +7,16 @@ on:
         required: true
         type: string
         description: Environment to deploy
+  workflow_dispatch:
+    inputs:
+      stage:
+        type: choice
+        description: Environment to destroy
+        options: 
+        - dev
+        - qa
+      message:
+        required: true
 
 env:
   aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
@@ -73,8 +83,8 @@ jobs:
             echo "API_GATEWAY_URL=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
 
   test:
-      needs: deploy
-      runs-on: ubuntu-latest
-      steps:
-          - run: echo url is ${{ needs.deploy.outputs.api_gateway_url }}
-            shell: bash
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+        - run: echo url is ${{ needs.deploy.outputs.api_gateway_url }}
+          shell: bash
