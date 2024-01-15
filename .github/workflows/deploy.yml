@@ -27,6 +27,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: setup
+    env:
+      sha_shot: $(echo $GITHUB_SHA | cut -c 1-6)
     outputs:
       api_gateway_url: ${{ steps.action.outputs.API_GATEWAY_URL }}
     steps:
