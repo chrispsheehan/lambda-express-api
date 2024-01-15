@@ -16,7 +16,7 @@ echo uploading $S3_FILE_PATH to $S3_BUCKET_NAME s3 bucket
 
 echo $(ls)
 
-echo $(ls /src)
+echo $(ls src)
 
 # Use the AWS CLI to upload the file to S3
 aws s3 cp ./$S3_FILE_PATH s3://$S3_BUCKET_NAME/$S3_FILE_PATH
