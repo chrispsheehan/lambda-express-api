@@ -41,39 +41,41 @@ jobs:
           S3_BUCKET_NAME: ${{ env.s3_version_bucket }}
         shell: bash
         run: |
-          bash bin/setup-backend.sh
+          bash bin/create-s3-bucket.sh
 
-  # build:
-  #     needs: setup
-  #     env:
-  #         app_folder: src/
-  #         app_zip_path: ${{ needs.setup.outputs.sha_short }}-lambda.zip
-  #     runs-on: ubuntu-latest
-  #     outputs:
-  #       app_zip_path: ${{ steps.set-zip-path.outputs.APP_ZIP_PATH }}
-  #     steps:
-  #       - uses: actions/checkout@v4
-  #         with:
-  #           fetch-depth: 0
+  build:
+      needs: setup
+      env:
+          app_folder: src/
+          app_zip_path: ${{ needs.setup.outputs.sha_short }}-lambda.zip
+      runs-on: ubuntu-latest
+      outputs:
+        app_zip_path: ${{ steps.set-zip-path.outputs.APP_ZIP_PATH }}
+      steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
   
-  #       - name: Build
-  #         run: |
-  #             cd ${{ env.app_folder }}
-  #             npm install
+        - name: Build
+          run: |
+              cd ${{ env.app_folder }}
+              npm install
   
-  #       - name: Zip
-  #         run: |
-  #             cd ${{ env.app_folder }}
-  #             zip -r ${{ env.app_zip_path }} *
+        - name: Zip
+          run: |
+              cd ${{ env.app_folder }}
+              zip -r ${{ env.app_zip_path }} *
   
-  #       - name: Upload build artefact
-  #         uses: actions/upload-artifact@v3
-  #         with:
-  #             name: zipped-code
-  #             path: ${{ env.app_folder }}/${{ env.app_zip_path }}
-
-  #       - id: set-zip-path
-  #         run: echo "APP_ZIP_PATH=$(echo ${{ env.app_zip_path }})" >> $GITHUB_OUTPUT
+        - name: Uploadfile to s3
+          env:
+            S3_BUCKET_NAME: ${{ env.s3_version_bucket }}
+            S3_FILE_PATH: ${{ env.app_zip_path }}
+          shell: bash
+          run: |
+            bash bin/upload-s3-file.sh
+      
+        - id: set-zip-path
+          run: echo "APP_ZIP_PATH=$(echo ${{ env.app_zip_path }})" >> $GITHUB_OUTPUT
 
   # dev:
   #   uses: ./.github/workflows/deploy.yml
