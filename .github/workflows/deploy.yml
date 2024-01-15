@@ -7,102 +7,77 @@ on:
         required: true
         type: string
         description: Environment to deploy
+      version:
+        required: true
+        type: string
 
 env:
-    aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
-    aws_region: ${{ vars.AWS_REGION }}
-    aws_role: ${{ vars.AWS_ROLE }}
-    stage: ${{ inputs.stage }}
+  aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
+  aws_region: ${{ vars.AWS_REGION }}
+  aws_role: ${{ vars.AWS_ROLE }}
+  stage: ${{ inputs.stage }}
+  version_file: ${{ inputs.version}}.zip
       
 jobs:
-    setup:
-      runs-on: ubuntu-latest
-      outputs:
-        sha_short: ${{ steps.set_sha.outputs.GITHUB_SHA_SHORT }}
-      steps:
-        - uses: actions/checkout@v4
-        - id: set_sha
-          run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_OUTPUT
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      sha_short: ${{ steps.set_sha.outputs.GITHUB_SHA_SHORT }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: set_sha
+        run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_OUTPUT
 
-    build:
-        needs: setup
+  deploy:
+    runs-on: ubuntu-latest
+    needs: setup
+    outputs:
+      api_gateway_url: ${{ steps.action.outputs.API_GATEWAY_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+            fetch-depth: 0
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+            aws-region: ${{ env.aws_region }}
+            role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/${{ env.aws_role }}
+            role-session-name: GitHubActions
+
+      - name: Download version from s3
         env:
-            app_folder: src/
-            app_zip_path: ${{ needs.setup.outputs.sha_short }}-lambda.zip
-        runs-on: ubuntu-latest
-        outputs:
-          app_zip_path: ${{ steps.set-zip-path.outputs.APP_ZIP_PATH }}
-        steps:
-          - uses: actions/checkout@v4
-            with:
-              fetch-depth: 0
+          S3_BUCKET_NAME: "${{ github.event.repository.name }}-versions"
+          S3_FILE_NAME: ./${{ env.version_file }}
+        shell: bash
+        run: |
+          bash bin/download-s3-file.sh
+          echo $(ls -r)
+
+  #     - name: Init
+  #       shell: bash
+  #       run: |
+  #           cd tf
+  #           terraform init
+
+  #     - name: Select Workspace
+  #       shell: bash
+  #       run: |
+  #           cd tf
+  #           terraform workspace select -or-create ${{ env.stage }}
+  #           terraform init
     
-          - name: Build
-            run: |
-                cd ${{ env.app_folder }}
-                npm install
-    
-          - name: Zip
-            run: |
-                cd ${{ env.app_folder }}
-                zip -r ${{ env.app_zip_path }} *
-    
-          - name: Upload build artefact
-            uses: actions/upload-artifact@v3
-            with:
-                name: zipped-code
-                path: ${{ env.app_folder }}/${{ env.app_zip_path }}
+  #     - name: Action
+  #       shell: bash
+  #       id: action
+  #       run: |
+  #           cd tf
+  #           terraform apply -auto-approve -var function-stage=${{ env.stage }} -var lambda-zip-path=${{ needs.setup.outputs.sha_short }}.zip
+  #           echo "API_GATEWAY_URL=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
 
-          - id: set-zip-path
-            run: echo "APP_ZIP_PATH=$(echo ${{ env.app_zip_path }})" >> $GITHUB_OUTPUT
-
-    deploy:
-        runs-on: ubuntu-latest
-        needs: build
-        outputs:
-          api_gateway_url: ${{ steps.action.outputs.API_GATEWAY_URL }}
-        steps:
-          - uses: actions/checkout@v4
-            with:
-                fetch-depth: 0
-
-          - name: Download a single artifact
-            uses: actions/download-artifact@v3
-            with:
-                name: zipped-code
-                path: tf
-
-          - name: Configure AWS Credentials
-            uses: aws-actions/configure-aws-credentials@v4
-            with:
-                aws-region: ${{ env.aws_region }}
-                role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/${{ env.aws_role }}
-                role-session-name: GitHubActions
-
-          - name: Init
-            shell: bash
-            run: |
-                cd tf
-                terraform init
-
-          - name: Select Workspace
-            shell: bash
-            run: |
-                cd tf
-                terraform workspace select -or-create ${{ env.stage }}
-                terraform init
-        
-          - name: Action
-            shell: bash
-            id: action
-            run: |
-                cd tf
-                terraform apply -auto-approve -var function-stage=${{ env.stage }} -var lambda-zip-path=${{ needs.build.outputs.app_zip_path }}
-                echo "API_GATEWAY_URL=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
-
-    test:
-        needs: deploy
-        runs-on: ubuntu-latest
-        steps:
-            - run: echo url is ${{ needs.deploy.outputs.api_gateway_url }}
-              shell: bash
+  # test:
+  #     needs: deploy
+  #     runs-on: ubuntu-latest
+  #     steps:
+  #         - run: echo url is ${{ needs.deploy.outputs.api_gateway_url }}
+  #           shell: bash

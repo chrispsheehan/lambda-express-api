@@ -13,14 +13,12 @@ env:
   aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
   aws_region: ${{ vars.AWS_REGION }}
   aws_role: ${{ vars.AWS_ROLE }}
-  s3_version_bucket: "${{ github.event.repository.name }}-versions"
 
 jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
       sha_short: ${{ steps.set_sha.outputs.GITHUB_SHA_SHORT }}
-      s3_bucket: ${{ steps.s3_bucket.outputs.S3_BUCKET }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -38,7 +36,7 @@ jobs:
 
       - name: Setup s3 version bucket
         env:
-          S3_BUCKET_NAME: ${{ env.s3_version_bucket }}
+          S3_BUCKET_NAME: ${{ github.event.repository.name }}-versions
         shell: bash
         run: |
           bash bin/create-s3-bucket.sh
@@ -47,10 +45,7 @@ jobs:
       needs: setup
       env:
           app_folder: src/
-          app_zip_path: ${{ needs.setup.outputs.sha_short }}-lambda.zip
       runs-on: ubuntu-latest
-      outputs:
-        app_zip_path: ${{ steps.set-zip-path.outputs.APP_ZIP_PATH }}
       steps:
         - uses: actions/checkout@v4
           with:
@@ -64,7 +59,7 @@ jobs:
         - name: Zip
           run: |
               cd ${{ env.app_folder }}
-              zip -r ${{ env.app_zip_path }} *
+              zip -r ${{ needs.setup.outputs.sha_short }}.zip *
 
         - name: Configure AWS Credentials
           uses: aws-actions/configure-aws-credentials@v4
@@ -75,16 +70,17 @@ jobs:
   
         - name: Uploadfile to s3
           env:
-            S3_BUCKET_NAME: ${{ env.s3_version_bucket }}
-            S3_FILE_PATH: ${{ env.app_folder }}${{ env.app_zip_path }}
+            S3_BUCKET_NAME: ${{ github.event.repository.name }}-versions
+            S3_FILE_PATH: ${{ env.app_folder }}${{ needs.setup.outputs.sha_short }}.zip
           shell: bash
           run: |
             bash bin/upload-s3-file.sh
-      
-        - id: set-zip-path
-          run: echo "APP_ZIP_PATH=$(echo ${{ env.app_zip_path }})" >> $GITHUB_OUTPUT
 
-  # dev:
-  #   uses: ./.github/workflows/deploy.yml
-  #   with:
-  #     stage: dev
+  dev:
+    needs:
+      - setup
+      - build
+    uses: ./.github/workflows/deploy.yml
+    with:
+      stage: dev
+      version: ${{ needs.setup.outputs.sha_short }}
