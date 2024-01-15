@@ -1,5 +1,15 @@
 # lambda-express-api
 
+Express api running in aws lambda.
+
+## environments
+
+Multiple environments are supported via [terraform workspaces](https://developer.hashicorp.com/terraform/language/state/workspaces).
+
+- Changes to main are automatically deployed to dev.
+
+
+
 ## terraform
 
 Minimum requires deployment iam privileges.
