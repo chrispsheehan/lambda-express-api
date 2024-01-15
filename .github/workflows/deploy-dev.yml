@@ -65,6 +65,13 @@ jobs:
           run: |
               cd ${{ env.app_folder }}
               zip -r ${{ env.app_zip_path }} *
+
+        - name: Configure AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v4
+          with:
+              aws-region: ${{ env.aws_region }}
+              role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/${{ env.aws_role }}
+              role-session-name: GitHubActions
   
         - name: Uploadfile to s3
           env:
