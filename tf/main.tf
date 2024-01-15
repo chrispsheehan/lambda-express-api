@@ -15,7 +15,7 @@ resource "aws_iam_role" "iam_for_lambda" {
 }
 
 resource "aws_lambda_function" "lambda" {
-  depends_on = [ aws_s3_object.lambda-zip ]
+  depends_on = [aws_s3_object.lambda-zip]
 
   function_name = local.lambda-name
   role          = aws_iam_role.iam_for_lambda.arn
