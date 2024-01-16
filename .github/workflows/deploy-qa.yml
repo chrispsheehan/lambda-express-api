@@ -36,4 +36,4 @@ jobs:
         uses: ./.github/workflows/deploy.yml
         with:
             stage: qa
-            version_file: ${{  github.ref_name }}.zip
+            version_file: ${{ github.ref_name }}.zip
