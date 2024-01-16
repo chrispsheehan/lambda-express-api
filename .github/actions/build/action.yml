@@ -1,0 +1,48 @@
+name: Build code and upload
+
+inputs:
+  aws_account_id:
+    description: 'AWS account id'
+    required: true
+  aws_region:
+    description: 'AWS region'
+    required: true
+  aws_role:
+    description: 'AWS role to assume'
+    required: true
+  version_file:
+    description: 's3 version zip target'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Build
+      run: |
+          cd ${{ env.app_folder }}
+          npm install
+
+    - name: Zip
+      run: |
+          cd ${{ env.app_folder }}
+          zip -r ${{ inputs.version_file }} *
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+          aws-region: ${{ env.aws_region }}
+          role-to-assume: arn:aws:iam::${{ env.aws_account_id }}:role/${{ env.aws_role }}
+          role-session-name: GitHubActions
+
+    - name: Uploadfile to s3
+      env:
+        S3_BUCKET_NAME: ${{ github.event.repository.name }}-versions
+        S3_FILE_PATH: ${{ env.app_folder }}${{ inputs.version_file }}
+      shell: bash
+      run: |
+        bash bin/upload-s3-file.sh
