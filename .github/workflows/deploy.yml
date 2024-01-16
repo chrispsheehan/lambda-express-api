@@ -7,6 +7,11 @@ on:
         required: true
         type: string
         description: Environment to deploy
+      version_file:
+        type: string
+        required: true
+        description: Version matching s3 zip
+
   workflow_dispatch:
     inputs:
       stage:
@@ -15,6 +20,10 @@ on:
         options: 
         - dev
         - qa
+      version_file:
+        type: string
+        required: true
+        description: Version matching s3 zip
       message:
         required: true
 
@@ -23,6 +32,7 @@ env:
   aws_region: ${{ vars.AWS_REGION }}
   aws_role: ${{ vars.AWS_ROLE }}
   stage: ${{ inputs.stage }}
+  version_file: ${{ inputs.version_file }}
 
 permissions:
   id-token: write
@@ -60,7 +70,7 @@ jobs:
       - name: Download version from s3
         env:
           S3_BUCKET_NAME: "${{ github.event.repository.name }}-versions"
-          S3_FILE_NAME: ./tf/${{ needs.setup.outputs.sha_short }}.zip
+          S3_FILE_NAME: ./tf/${{ env.version_file }}
         shell: bash
         run: |
           bash bin/download-s3-file.sh
@@ -83,7 +93,7 @@ jobs:
         id: action
         run: |
             cd tf
-            terraform apply -auto-approve -var function-stage=${{ env.stage }} -var lambda-zip-path=${{ needs.setup.outputs.sha_short }}.zip
+            terraform apply -auto-approve -var function-stage=${{ env.stage }} -var lambda-zip-path=${{ env.version_file }}
             echo "API_GATEWAY_URL=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
 
   test:
