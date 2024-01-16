@@ -23,11 +23,13 @@ runs:
         fetch-depth: 0
 
     - name: Build
+      shell: bash
       run: |
           cd ${{ env.app_folder }}
           npm install
 
     - name: Zip
+      shell: bash
       run: |
           cd ${{ env.app_folder }}
           zip -r ${{ inputs.version_file }} *
