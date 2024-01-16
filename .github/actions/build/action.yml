@@ -25,13 +25,13 @@ runs:
     - name: Build
       shell: bash
       run: |
-          cd ${{ env.app_folder }}
+          cd src
           npm install
 
     - name: Zip
       shell: bash
       run: |
-          cd ${{ env.app_folder }}
+          cd src
           zip -r ${{ inputs.version_file }} *
 
     - name: Configure AWS Credentials
