@@ -1,13 +1,11 @@
 #!/bin/bash
 
-response_headers=$(curl -I -s $API_URL)
-status_code=$(echo "$response_headers" | grep -oP '(?<=HTTP/1.1 )\d{3}')
+curl $API_URL
 
-echo "HTTP status code: $status_code"
-
-if [ "$status_code" -eq 200 ]; then
-    echo "API request succeeded."
+# Check if the curl was successful
+if [ $? -eq 0 ]; then
+    echo "\nCurled successfully."
 else
-    echo "API request failed with status code $status_code."
+    echo "Failed to reach $API_URL."
     exit 1
 fi
