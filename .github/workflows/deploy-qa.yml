@@ -28,7 +28,7 @@ jobs:
                 aws_account_id: ${{ env.aws_account_id }}
                 aws_region: ${{ env.aws_region }}
                 aws_role: ${{ env.aws_role }}
-                version_file: ${{  github.ref_name }}.zip
+                version_file: ${{ github.ref_name }}.zip
 
     qa:
         needs:
