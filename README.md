@@ -9,6 +9,8 @@ Multiple environments are supported via [terraform workspaces](https://developer
 - Changes to main are automatically deployed to dev.
 - New tags will trigger deploy to QA.
   - `git tag v1.0.0 && git push origin --tags`
+- Deploy tag to prod by manually running `Deploy Environment` workflow
+  - Pass in tag i.e. `v1.0.0` along with a message.
 
 
 ## terraform
