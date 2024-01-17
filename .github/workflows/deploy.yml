@@ -20,6 +20,7 @@ on:
         options: 
         - dev
         - qa
+        - prod
       version_file:
         type: string
         required: true
