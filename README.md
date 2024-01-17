@@ -7,7 +7,8 @@ Express api running in aws lambda.
 Multiple environments are supported via [terraform workspaces](https://developer.hashicorp.com/terraform/language/state/workspaces).
 
 - Changes to main are automatically deployed to dev.
-
+- New tags will trigger deploy to QA.
+  - `git tag v1.0.0 && git push origin --tags`
 
 
 ## terraform
