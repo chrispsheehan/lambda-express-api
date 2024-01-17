@@ -44,7 +44,7 @@ runs:
     - name: Uploadfile to s3
       env:
         S3_BUCKET_NAME: ${{ github.event.repository.name }}-versions
-        S3_FILE_PATH: ${{ env.app_folder }}${{ inputs.version_file }}
+        S3_FILE_PATH: src/${{ inputs.version_file }}
       shell: bash
       run: |
         bash bin/upload-s3-file.sh
