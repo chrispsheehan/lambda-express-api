@@ -9,6 +9,7 @@ on:
         options: 
         - dev
         - qa
+        - prod
       message:
         required: true
 

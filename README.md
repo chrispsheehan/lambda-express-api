@@ -2,6 +2,10 @@
 
 Express api running in aws lambda.
 
+## security
+
+Move all access settings to github. Only allow user x to create tags/run workflows manually etc.
+
 ## environments
 
 Multiple environments are supported via [terraform workspaces](https://developer.hashicorp.com/terraform/language/state/workspaces).
@@ -10,7 +14,7 @@ Multiple environments are supported via [terraform workspaces](https://developer
 - New tags will trigger deploy to QA.
   - `git tag v1.0.0 && git push origin --tags`
 - Deploy tag to prod by manually running `Deploy Environment` workflow
-  - Pass in tag i.e. `v1.0.0` along with a message.
+  - Pass in the file name i.e. `v1.0.0.zip` along with a message.
 
 
 ## terraform
