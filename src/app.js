@@ -7,10 +7,7 @@ app.get('/hello', (req, res) => {
 });
 
 app.use((req, res, next) => { 
-  console.log(`Params: ${JSON.stringify(req.params)}`); // log out requests
-  console.log(`Headers: ${JSON.stringify(req.headers)}`);
-  console.log(`${req.method}: ${JSON.stringify(req.url)}`);
-  res.status(200).json({msg: `Hello, your ip is ${ipAddress}`});
+  res.status(200).json({msg: `Hello, heres your request ${JSON.stringify(req)}`});
 })
 
 const server = awsServerlessExpress.createServer(app);
