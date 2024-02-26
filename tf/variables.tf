@@ -20,3 +20,7 @@ variable "lambda-zip-path" {
   type        = string
   description = "Lambda code (zipped) to be deployed"
 }
+
+variable "whitelist_ips" {
+  default = []
+}
