@@ -22,6 +22,5 @@ variable "lambda-zip-path" {
 }
 
 variable "whitelist_ips" {
-  //default = []
   default = ["0.0.0.0/0"]
 }

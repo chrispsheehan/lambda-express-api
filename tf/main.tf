@@ -96,8 +96,6 @@ resource "aws_api_gateway_method_settings" "this" {
 }
 
 resource "aws_api_gateway_rest_api_policy" "whitelist" {
-  count = length(var.whitelist_ips) > 0 ? 1 : 0
-
   rest_api_id = aws_api_gateway_rest_api.this.id
   policy      = data.aws_iam_policy_document.whitelist_ips.json
 }
