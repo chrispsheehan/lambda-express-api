@@ -97,5 +97,5 @@ resource "aws_api_gateway_method_settings" "this" {
 
 resource "aws_api_gateway_rest_api_policy" "whitelist" {
   rest_api_id = aws_api_gateway_rest_api.this.id
-  policy = data.aws_iam_policy_document.whitelist_ips.json
+  policy      = data.aws_iam_policy_document.whitelist_ips.json
 }
