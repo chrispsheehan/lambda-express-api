@@ -40,9 +40,9 @@ resource "aws_lambda_permission" "this" {
 }
 
 resource "aws_apigatewayv2_api" "this" {
-  name        = "${local.lambda_name}-APIGateway"
+  name          = "${local.lambda_name}-APIGateway"
   protocol_type = "HTTP"
-  target      = aws_lambda_function.lambda.invoke_arn
+  target        = aws_lambda_function.lambda.invoke_arn
 }
 
 resource "aws_apigatewayv2_integration" "this" {
