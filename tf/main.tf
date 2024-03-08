@@ -60,7 +60,7 @@ resource "aws_apigatewayv2_route" "this" {
 resource "aws_apigatewayv2_stage" "this" {
   api_id      = aws_apigatewayv2_api.this.id
   name        = var.function_stage
-  auto_deploy = true
+  auto_deploy = false
 }
 
 resource "aws_iam_policy" "whitelist_policy" {
