@@ -10,7 +10,7 @@ resource "aws_s3_object" "lambda_zip" {
 }
 
 resource "aws_iam_role" "iam_for_lambda" {
-  name               = "${local.lambda_name}-iam"
+  name               = "${local.lambda_name}_iam"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
@@ -61,4 +61,14 @@ resource "aws_apigatewayv2_stage" "this" {
   api_id      = aws_apigatewayv2_api.this.id
   name        = var.function_stage
   auto_deploy = true
+}
+
+resource "aws_iam_policy" "whitelist_policy" {
+  name   = "${local.lambda_name}_whitelist_iam"
+  policy = data.aws_iam_policy_document.whitelist_ips.json
+}
+
+resource "aws_iam_role_policy_attachment" "api_gateway_v2_policy_attachment" {
+  role       = aws_iam_role.iam_for_lambda.arn
+  policy_arn = aws_iam_policy.whitelist_policy.arn
 }

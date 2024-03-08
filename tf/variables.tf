@@ -7,7 +7,7 @@ variable "region" {
 variable "function_name" {
   type        = string
   description = "Name of the lambda function"
-  default     = "lambda-express-api"
+  default     = "lambda_express_api"
 }
 
 variable "function_stage" {
