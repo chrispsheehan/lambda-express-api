@@ -10,23 +10,3 @@ data "aws_iam_policy_document" "assume_role" {
     actions = ["sts:AssumeRole"]
   }
 }
-
-data "aws_iam_policy_document" "whitelist_ips" {
-  statement {
-    effect    = "Allow"
-    actions   = ["execute-api:Invoke"]
-    resources = ["${aws_apigatewayv2_api.this.execution_arn}/*/*/*"]
-  }
-
-  statement {
-    effect    = "Deny"
-    actions   = ["execute-api:Invoke"]
-    resources = ["${aws_apigatewayv2_api.this.execution_arn}/*/*/*"]
-
-    condition {
-      test     = "NotIpAddress"
-      variable = "aws:SourceIp"
-      values   = var.whitelist_ips
-    }
-  }
-}

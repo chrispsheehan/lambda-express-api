@@ -62,13 +62,3 @@ resource "aws_apigatewayv2_stage" "this" {
   name        = var.function_stage
   auto_deploy = false
 }
-
-resource "aws_iam_policy" "whitelist_policy" {
-  name   = "${local.lambda_name}-whitelist-iam-policy"
-  policy = data.aws_iam_policy_document.whitelist_ips.json
-}
-
-resource "aws_iam_role_policy_attachment" "whitelist_policy_attachment" {
-  role       = aws_iam_role.iam_for_lambda.name
-  policy_arn = aws_iam_policy.whitelist_policy.arn
-}
