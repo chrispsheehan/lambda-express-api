@@ -64,7 +64,7 @@ resource "aws_apigatewayv2_stage" "this" {
 }
 
 resource "aws_iam_policy" "whitelist_policy" {
-  name   = "${local.lambda_name}_whitelist_iam"
+  name   = "${local.lambda_name}-whitelist-iam"
   policy = data.aws_iam_policy_document.whitelist_ips.json
 }
 
