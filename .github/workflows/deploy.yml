@@ -84,7 +84,7 @@ jobs:
         id: action
         run: |
             cd tf
-            terraform apply -auto-approve -var function-stage=${{ env.stage }} -var lambda-zip-path=${{ env.version_file }}
+            terraform apply -auto-approve -var function_stage=${{ env.stage }} -var lambda_zip_path=${{ env.version_file }}
             echo "API_GATEWAY_URL=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
 
   test:

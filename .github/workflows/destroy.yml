@@ -55,4 +55,4 @@ jobs:
         id: action
         run: |
             cd tf
-            terraform destroy -auto-approve -var function-stage=${{ inputs.stage }} -var lambda-zip-path=this_file_doesnt_exist.zip
+            terraform destroy -auto-approve -var function_stage=${{ inputs.stage }} -var lambda_zip_path=this_file_doesnt_exist.zip
