@@ -4,19 +4,19 @@ variable "region" {
   default     = "eu-west-2"
 }
 
-variable "function-name" {
+variable "function_name" {
   type        = string
   description = "Name of the lambda function"
   default     = "lambda-express-api"
 }
 
-variable "function-stage" {
+variable "function_stage" {
   type        = string
   description = "Lambda api stage i.e. dev/qa/production"
   default     = "dev"
 }
 
-variable "lambda-zip-path" {
+variable "lambda_zip_path" {
   type        = string
   description = "Lambda code (zipped) to be deployed"
 }

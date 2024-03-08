@@ -1,5 +1,5 @@
 locals {
-  lambda-runtime = "nodejs18.x"
-  lambda-name    = "${var.function-stage}-${var.function-name}"
-  lambda-bucket  = "${local.lambda-name}-bucket"
+  lambda_runtime = "nodejs18.x"
+  lambda_name    = "${var.function_stage}-${var.function_name}"
+  lambda_bucket  = "${local.lambda_name}-bucket"
 }

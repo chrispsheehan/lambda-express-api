@@ -1,5 +1,5 @@
 output "api_gateway_url" {
-  value = "${aws_api_gateway_deployment.this.invoke_url}${aws_api_gateway_stage.this.stage_name}"
+  value = "${aws_apigatewayv2_stage.this.invoke_url}"
 }
 
 output "function_name" {
