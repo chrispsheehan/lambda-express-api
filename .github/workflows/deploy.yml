@@ -16,7 +16,7 @@ on:
     inputs:
       stage:
         type: choice
-        description: Environment to destroy
+        description: Environment to deploy
         options: 
         - dev
         - qa
